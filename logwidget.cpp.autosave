@@ -1,0 +1,85 @@
+#include "logdialog.h"
+#include "ui_logDialog.h"
+#include <QList>
+#include <QDebug>
+#include <QString>
+#include <QFile>
+#include <QTextStream>
+#include <QInputDialog>
+#include <QMessageBox>
+logDialog::logDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::logDialog)
+{
+    ui->setupUi(this);
+}
+
+logDialog::~logDialog()
+{
+    delete ui;
+}
+void logDialog::LoadUserInfo()
+{
+    QFile file("PeopleData.txt");//get in words.
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        qDebug() << "File has wrong!";
+        return -2;
+    }
+
+    QTextStream in(&file);
+    while(!in.atEnd())
+    {
+        QString str1 = in.readLine();
+        QString str2 = in.readLine();
+        QString str3 = in.readLine();
+        QString str4 = in.readLine();
+        QString str5 = in.readLine();
+        people tmp;
+        tmp.UserName = str1;
+        tmp.Signature = str2;
+        tmp.PassWord = str3;
+        tmp.Email = str3;
+        tmp.score = str4.toInt();
+        tmp.rank = str5.toInt();
+        UserList.append(tmp);
+        ++NumOfPeople;
+    }
+}
+
+int logDialog::findname(QString a)
+{
+    for(int i=0; i<NumOfPeople; ++i)
+    {
+        if(UserList[i].UserName == a)
+            return i;
+    }
+    return -1;
+}
+
+bool logDialog::CheckPassWord(int s,QString ss)
+{
+    if(UserList[s].PassWord == ss)
+        return True;
+    else return False; 
+}
+
+void logDialog::on_log_clicked()
+{
+    QString tmp_name, tmp_password;
+    tmp_name = ui->GetUserName->text();
+    tmp_password = ui->PassWord->text();
+     qDebug() << tmp_name << tmp_password;
+    int s = findname(tmp_name);
+    if(s != -1)
+    {
+        if(CheckPassWord(s,tmp_password))
+        accept();//check the loader and give the accept to open the MyWidget.
+        else
+            QMessageBox::warning(this,QObject::tr("no find!"),QObject::tr("用户名或密码不正确！")
+                                              ,QMessageBox::Abort);
+    }
+    else
+        QMessageBox::warning(this,QObject::tr("no find!"),QObject::tr("用户名或密码不正确！")
+                                          ,QMessageBox::Abort);
+}

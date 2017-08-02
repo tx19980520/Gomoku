@@ -1,0 +1,40 @@
+#ifndef WIDGET_H
+#define WIDGET_H
+
+#include <QWidget>
+#include <QString>
+#include <QList>
+namespace Ui {
+class logWidget;
+}
+class people{
+public:
+    QString UserName;
+    QString PassWord;
+    QString Signature;
+    QString Email;
+    int rank;
+    int score;
+};
+
+class logWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    bool enter;
+    int NumOfPeople;
+    QList<people> UserList;
+    void LoadUserInfo();
+    explicit logWidget(QWidget *parent = 0);
+    ~logWidget();
+    int findname(QString a);
+    bool CheckPassWord(int s ,QString ss);
+private slots:
+    void on_load_clicked();
+    
+private:
+    Ui::logWidget *ui;
+};
+
+#endif // WIDGET_H
